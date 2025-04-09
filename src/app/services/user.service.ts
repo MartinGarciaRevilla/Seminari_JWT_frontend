@@ -14,26 +14,36 @@ export class UserService {
   private apiUrl = "http://localhost:9000/api/users";
 
   getUsers(): Observable<User[]> {
-/**
- 
-    let token = localStorage.getItem('access_token');
-    const httpHeaders: HttpHeaders = new HttpHeaders({
-      Authorization: 'Bearer' + localStorage.getItem('access_token')
-    })
-      ... get(apiURL, {headers: httpHeaders})
-    */
-    return this.http.get<User[]>(this.apiUrl).pipe(
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.error('No se encontró el token de acceso.');
+      return of([]); // Devuelve un array vacío si no hay token
+    }
+  
+    const httpHeaders = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+  
+    return this.http.get<User[]>(this.apiUrl, { headers: httpHeaders }).pipe(
       catchError(this.handleError<User[]>('getUsers', [])) // Retorna un array vacío si hay error
     );
   }
-
+  
   getUser(id: number): Observable<User> {
-
-    return this.http.get<User>(`${this.apiUrl}/${id}`).pipe(
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.error('No se encontró el token de acceso.');
+      return of({} as User); // Devuelve un objeto vacío si no hay token
+    }
+  
+    const httpHeaders = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+  
+    return this.http.get<User>(`${this.apiUrl}/${id}`, { headers: httpHeaders }).pipe(
       catchError(this.handleError<User>('getUser')) // Retorna un observable vacío en caso de error
     );
   }
-
   // Método genérico para manejar errores
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {

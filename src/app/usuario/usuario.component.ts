@@ -14,6 +14,8 @@ export class UsuarioComponent {
   foto: string;
   mostrardata: boolean;
   isLoading: boolean = true;
+  tokenRenovado: boolean = false; // Nueva propiedad para rastrear la renovación del token
+
   
   usuario: User = {
     id: 1,
@@ -39,4 +41,6 @@ export class UsuarioComponent {
     this.usuario.name = Name;
   }
 
+
+  
 }

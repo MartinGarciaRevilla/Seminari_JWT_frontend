@@ -33,27 +33,25 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.route.queryParams.subscribe(params => {
       const token = params['token'];
-      console.log("esto" +token);
+      console.log("esto" + token);
       if (token) {
-        console.log("Token rebut:", token);
+        console.log("Token recibido:", token);
         this.authService.handleGoogleCallback(token).subscribe(() => {
           this.isLoading = false; 
           this.exportLoggedIn.emit(true); 
-        });// Avisa de que l'usuari està
-      }
-      else{
+        });
+      } else {
         this.isLoading = false;
       }
-      
     });
+
     this.formularioLogin = this.form.group({
       email: ['joan1234@example.com', [Validators.required, Validators.email]], // Valor predeterminado para el email
       password: ['12345678', [Validators.required, Validators.minLength(8)]] // Valor predeterminado para la contraseña
     });
-  };
+  }
 
   hasError(controlName: string, errorType: string) {
     return this.formularioLogin.get(controlName)?.hasError(errorType) && this.formularioLogin.get(controlName)?.touched;
@@ -71,6 +69,7 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         console.log('Login exitoso:', response);
         localStorage.setItem('access_token', response.token);
+        localStorage.setItem('refresh_token', response.refreshToken); // Guarda el refresh token
         this.exportLoggedIn.emit(true);
       },
       error: (error) => {
@@ -79,6 +78,7 @@ export class LoginComponent implements OnInit {
       }
     });
   }
+
   loginWithGoogle(): void {
     this.authService.loginWithGoogle();
   }
